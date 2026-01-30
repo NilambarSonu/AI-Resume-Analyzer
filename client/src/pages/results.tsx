@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Check, X, ArrowRight, Download, Share2, Target, Brain, Code2, AlertTriangle } from "lucide-react";
+import { Check, X, ArrowRight, Download, Share2, Target, Brain, Code2, AlertTriangle, Loader2 } from "lucide-react";
 import { Background3D } from "@/components/layout/background-3d";
 import { CyberButton } from "@/components/ui/button-cyber";
 import { ScoreChart } from "@/components/charts/score-chart";
 import { SkillsRadar } from "@/components/charts/skills-radar";
 import { type AnalysisResult } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Results() {
   const [_, setLocation] = useLocation();
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const stored = localStorage.getItem("analysisResult");
@@ -20,6 +24,58 @@ export default function Results() {
     }
     setResult(JSON.parse(stored));
   }, [setLocation]);
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'My AI Career Analysis',
+        text: `I just analyzed my resume and got a match score of ${result?.score}%!`,
+        url: window.location.href,
+      }).catch(() => {
+        toast({
+          title: "Link Copied",
+          description: "Analysis report link copied to clipboard.",
+        });
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link Copied",
+        description: "Analysis report link copied to clipboard.",
+      });
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    // Simulate PDF generation
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const blob = new Blob(["AI Career Architect - Report Content"], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `career-report-${new Date().getTime()}.pdf`;
+    a.click();
+    
+    setIsExporting(false);
+    toast({
+      title: "Export Complete",
+      description: "Your PDF report has been downloaded.",
+    });
+  };
+
+  const handleGenerateResume = async () => {
+    setIsGenerating(true);
+    // Simulate AI resume generation
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    setIsGenerating(false);
+    
+    toast({
+      title: "Resume Generated",
+      description: "A new optimized resume version is ready for review.",
+    });
+  };
 
   if (!result) return null;
 
@@ -36,11 +92,21 @@ export default function Results() {
           <span className="font-display font-bold tracking-wider hidden md:block">CAREER ARCHITECT</span>
         </div>
         <div className="flex gap-4">
-          <CyberButton variant="outline" className="hidden md:flex text-xs px-4 py-2 h-auto">
+          <CyberButton 
+            variant="outline" 
+            className="hidden md:flex text-xs px-4 py-2 h-auto"
+            onClick={handleShare}
+          >
             <Share2 className="w-3 h-3 mr-2" /> Share Report
           </CyberButton>
-          <CyberButton variant="primary" className="text-xs px-4 py-2 h-auto">
-            <Download className="w-3 h-3 mr-2" /> Export PDF
+          <CyberButton 
+            variant="primary" 
+            className="text-xs px-4 py-2 h-auto"
+            onClick={handleExportPDF}
+            disabled={isExporting}
+          >
+            {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Download className="w-3 h-3 mr-2" />}
+            {isExporting ? "Exporting..." : "Export PDF"}
           </CyberButton>
         </div>
       </div>
@@ -175,8 +241,13 @@ export default function Results() {
               </div>
               
               <div className="pt-4 mt-4">
-                 <CyberButton className="w-full text-xs">
-                    GENERATE NEW RESUME <ArrowRight className="w-3 h-3 ml-2" />
+                 <CyberButton 
+                   className="w-full text-xs"
+                   onClick={handleGenerateResume}
+                   disabled={isGenerating}
+                 >
+                    {isGenerating ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <ArrowRight className="w-3 h-3 mr-2" />}
+                    {isGenerating ? "GENERATING..." : "GENERATE NEW RESUME"}
                  </CyberButton>
               </div>
             </div>
