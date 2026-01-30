@@ -41,10 +41,11 @@ export function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProps) {
     <div className="w-full max-w-2xl mx-auto p-1">
       {/* Decorative corners */}
       <div className="relative glass-panel rounded-xl overflow-hidden p-8">
-        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary" />
-        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary" />
-        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary" />
-        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary" />
+        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary animate-pulse" />
+        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary animate-pulse" />
+        <div className="scanline" />
 
         <div
           {...getRootProps()}

@@ -46,8 +46,9 @@ export default function Home() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            whileHover={{ scale: 1.02 }}
           >
-            <h1 className="text-5xl md:text-7xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-cyan-500 text-glow tracking-tight">
+            <h1 className="text-5xl md:text-7xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-cyan-500 text-glow tracking-tight cursor-default">
               AI CAREER <br className="hidden md:block" />
               <span className="text-primary">ARCHITECT</span>
             </h1>
