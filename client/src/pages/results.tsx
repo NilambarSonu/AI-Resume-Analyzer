@@ -77,6 +77,21 @@ export default function Results() {
     });
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   if (!result) return null;
 
   return (
@@ -113,12 +128,16 @@ export default function Results() {
 
       <main className="container mx-auto px-4 pt-8">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          variants={container}
+          initial="hidden"
+          animate="show"
           className="grid grid-cols-1 lg:grid-cols-12 gap-6"
         >
           {/* Main Score Card - Top Left */}
-          <div className="lg:col-span-4 glass-panel rounded-xl p-6 min-h-[300px] flex flex-col relative overflow-hidden group">
+          <motion.div 
+            variants={item}
+            className="lg:col-span-4 glass-panel rounded-xl p-6 min-h-[300px] flex flex-col relative overflow-hidden group"
+          >
             <div className="absolute top-0 right-0 p-4 opacity-50">
               <Target className="w-6 h-6 text-primary" />
             </div>
@@ -131,10 +150,13 @@ export default function Results() {
                 Your profile ranks in the top <span className="text-white font-bold">{100 - result.score}%</span> of candidates
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Radar Chart - Top Middle */}
-          <div className="lg:col-span-5 glass-panel rounded-xl p-6 min-h-[300px] flex flex-col">
+          <motion.div 
+            variants={item}
+            className="lg:col-span-5 glass-panel rounded-xl p-6 min-h-[300px] flex flex-col"
+          >
             <h3 className="text-lg font-display text-secondary mb-4 flex items-center gap-2">
               <Brain className="w-5 h-5" />
               SKILL VECTORS
@@ -142,10 +164,10 @@ export default function Results() {
             <div className="flex-1 w-full h-[250px]">
               <SkillsRadar data={result.chart_data} />
             </div>
-          </div>
+          </motion.div>
 
           {/* Quick Stats - Top Right */}
-          <div className="lg:col-span-3 space-y-6">
+          <motion.div variants={item} className="lg:col-span-3 space-y-6">
             <div className="glass-panel rounded-xl p-6 flex flex-col gap-2 relative overflow-hidden">
                <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/20 blur-2xl rounded-full" />
                <span className="text-xs font-mono text-muted-foreground">KEYWORD MATCHES</span>
@@ -162,10 +184,10 @@ export default function Results() {
                  <div className="h-full bg-red-500 w-[30%]" />
                </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Detailed Lists - Bottom Row */}
-          <div className="lg:col-span-8 glass-panel rounded-xl p-8">
+          <motion.div variants={item} className="lg:col-span-8 glass-panel rounded-xl p-8">
             <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-4">
               <Code2 className="w-5 h-5 text-primary" />
               <h3 className="text-xl font-display text-white">TECHNICAL ANALYSIS</h3>
@@ -181,7 +203,7 @@ export default function Results() {
                   {result.matches.map((skill, i) => (
                     <span 
                       key={i} 
-                      className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-mono flex items-center gap-1"
+                      className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-mono flex items-center gap-1 hover:bg-primary/20 hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all cursor-default"
                     >
                       <Check className="w-3 h-3" /> {skill}
                     </span>
@@ -198,7 +220,7 @@ export default function Results() {
                   {result.missing.map((skill, i) => (
                     <span 
                       key={i} 
-                      className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-mono flex items-center gap-1"
+                      className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-mono flex items-center gap-1 hover:bg-red-500/20 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all cursor-default"
                     >
                       <X className="w-3 h-3" /> {skill}
                     </span>
@@ -206,10 +228,10 @@ export default function Results() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Recommendations / Next Steps - Bottom Right */}
-          <div className="lg:col-span-4 glass-panel rounded-xl p-8 bg-gradient-to-br from-white/5 to-transparent">
+          <motion.div variants={item} className="lg:col-span-4 glass-panel rounded-xl p-8 bg-gradient-to-br from-white/5 to-transparent">
              <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-4">
               <AlertTriangle className="w-5 h-5 text-yellow-400" />
               <h3 className="text-xl font-display text-white">ACTION PLAN</h3>
@@ -241,17 +263,22 @@ export default function Results() {
               </div>
               
               <div className="pt-4 mt-4">
-                 <CyberButton 
-                   className="w-full text-xs"
-                   onClick={handleGenerateResume}
-                   disabled={isGenerating}
+                 <motion.div
+                   animate={{ scale: [1, 1.02, 1] }}
+                   transition={{ duration: 2, repeat: Infinity }}
                  >
-                    {isGenerating ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <ArrowRight className="w-3 h-3 mr-2" />}
-                    {isGenerating ? "GENERATING..." : "GENERATE NEW RESUME"}
-                 </CyberButton>
+                   <CyberButton 
+                     className="w-full text-xs"
+                     onClick={handleGenerateResume}
+                     disabled={isGenerating}
+                   >
+                      {isGenerating ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <ArrowRight className="w-3 h-3 mr-2" />}
+                      {isGenerating ? "GENERATING..." : "GENERATE NEW RESUME"}
+                   </CyberButton>
+                 </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </motion.div>
       </main>
