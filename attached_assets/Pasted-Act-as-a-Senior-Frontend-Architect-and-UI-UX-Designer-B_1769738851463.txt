@@ -1,0 +1,53 @@
+Act as a Senior Frontend Architect and UI/UX Designer. Build a high-performance, visually stunning "AI Resume Analyzer & Job Match System" prototype.
+
+**The Goal:**
+Create an immersive, "Gamified" dashboard that students will love. It should feel like a futuristic Command Center or a Video Game Stat Screen, not a boring corporate tool.
+
+**The Stack (Strict):**
+- **Frontend:** React (Vite), Tailwind CSS.
+- **3D & Animation:** `three`, `@react-three/fiber`, `@react-three/drei` (for 3D background particles/grid), `framer-motion` (for page transitions and hover effects).
+- **Visualization:** `recharts` (for data viz).
+- **Icons:** `lucide-react`.
+- **Backend:** Python FastAPI (standard structure).
+
+**Design System & Theme:**
+- **Theme:** "Cybernetic Glassmorphism." Dark background (slate-900/black) with neon accents (Purple/Cyan gradients).
+- **UI Elements:** Frosted glass cards (backdrop-blur), glowing borders on hover, monospace fonts for data.
+
+**Key Features to Build:**
+
+1. **3D Landing Scene (The "Wow" Factor):**
+   - Create a background component using `@react-three/fiber`.
+   - Implement a "Floating Particle Mesh" or a "Rotating Wireframe Globe" that reacts to mouse movement.
+   - Overlay a large hero title: "AI CAREER ARCHITECT" with a typing animation effect.
+
+2. **The Interaction Zone (Upload):**
+   - A centralized "Drop Zone" that glows and pulses when a file is dragged over it.
+   - Use `framer-motion` to animate the transition from "Upload" to "Analyzing" (show a fake scanning progress bar with "Extracting entities..." text).
+
+3. **The "Results HUD" (The Dashboard):**
+   - Once analyzed, transition to a dashboard layout.
+   - **The Match Score:** A large animated **Radial Bar Chart** (Gauge) in the center. If score > 80, it glows green; else, orange.
+   - **Skill Radar:** Use a **Radar Chart (Spider Web)** to visualize "My Skills" vs "Job Requirements" (e.g., Python, React, Teamwork, Logic). This looks very "tech."
+   - **The Roadmap:** A vertical timeline component showing "Next Steps" to improve the score.
+
+4. **Backend (FastAPI):**
+   - Create `main.py`.
+   - Setup a POST `/analyze` endpoint.
+   - **Crucial:** Since the actual AI runs locally, return a **rich Mock JSON** response for now so the UI can be fully tested.
+   - Mock Data format:
+     {
+       "score": 78,
+       "matches": ["Python", "FastAPI", "React"],
+       "missing": ["Docker", "Kubernetes", "Redis"],
+       "chart_data": [
+          {"subject": "Coding", "A": 120, "B": 110, "fullMark": 150},
+          {"subject": "Design", "A": 98, "B": 130, "fullMark": 150}
+       ]
+     }
+
+**Execution Instructions:**
+- Scaffold the project with a clean folder structure (`/components`, `/hooks`, `/assets`).
+- Ensure the 3D canvas sits behind the UI (`z-index: -1`).
+- Make it mobile-responsive.
+- Write the code now.
