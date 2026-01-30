@@ -1,18 +1,26 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  id: serial("id").primaryKey(),
+  username: text("username").notNull(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+// Schema for the Analysis Result (matching the user's mock structure)
+export const chartDataSchema = z.object({
+  subject: z.string(),
+  A: z.number(),
+  B: z.number(),
+  fullMark: z.number(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export const analysisResultSchema = z.object({
+  score: z.number(),
+  matches: z.array(z.string()),
+  missing: z.array(z.string()),
+  chart_data: z.array(chartDataSchema),
+});
+
+export type AnalysisResult = z.infer<typeof analysisResultSchema>;
+export type ChartData = z.infer<typeof chartDataSchema>;
