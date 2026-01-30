@@ -69,7 +69,9 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8, duration: 0.5 }}
+          className="relative group"
         >
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
           <UploadZone onFileSelect={handleFileSelect} isAnalyzing={isPending} />
         </motion.div>
 

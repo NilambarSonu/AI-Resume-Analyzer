@@ -128,10 +128,10 @@ export function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProps) {
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center text-center space-y-4"
               >
-                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/10 transition-all duration-500">
                   <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
-                <h3 className="text-2xl font-display font-bold text-white">UPLOAD RESUME</h3>
+                <h3 className="text-2xl font-display font-bold text-white group-hover:text-primary transition-colors">UPLOAD RESUME</h3>
                 <p className="text-muted-foreground max-w-sm">
                   Drag & drop your PDF, DOCX, or TXT file here.
                   <br />
