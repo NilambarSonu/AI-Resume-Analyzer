@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ai-resume-analyzer-api
+    env: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CLIENT_URLS
+        sync: false

@@ -49,6 +49,10 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  app.get("/api/health", (_req, res) => {
+    res.json({ status: "ok" });
+  });
+
   app.post(api.analyze.submit.path, upload.single('resume'), async (req, res) => {
     try {
       if (!req.file) {

@@ -5,10 +5,12 @@ import { api } from "@shared/routes";
 // we define a helper type here, even though the schema might say z.any().
 type AnalyzeInput = FormData;
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+
 export function useAnalyzeResume() {
   return useMutation({
     mutationFn: async (formData: AnalyzeInput) => {
-      const res = await fetch(api.analyze.submit.path, {
+      const res = await fetch(`${API_BASE_URL}${api.analyze.submit.path}`, {
         method: api.analyze.submit.method,
         body: formData,
         // Content-Type header is set automatically by browser for FormData

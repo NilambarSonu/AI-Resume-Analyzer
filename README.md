@@ -95,6 +95,46 @@ Traditional recruitment often fails at scale. Recruiter bias, missed keywords, a
 
 ---
 
+## Deployment (Render + Vercel)
+
+This project is best deployed as:
+- **Render**: Node.js backend API
+- **Vercel**: Vite frontend
+
+### 1) Deploy API on Render
+
+1. Push your code to GitHub.
+2. In Render, create a new **Web Service** from this repo.
+3. Render can auto-read `render.yaml`, or use these manual values:
+   - Build Command: `npm ci && npm run build`
+   - Start Command: `npm run start`
+   - Health Check Path: `/api/health`
+4. Add environment variables:
+   - `GROQ_API_KEY` = your Groq key
+   - `CLIENT_URLS` = your Vercel app URL (or comma-separated URLs)
+
+After deploy, copy your backend URL, for example:
+`https://ai-resume-analyzer-api.onrender.com`
+
+### 2) Deploy Frontend on Vercel
+
+1. Import the same GitHub repo into Vercel.
+2. Vercel will read `vercel.json`.
+3. Add environment variable:
+   - `VITE_API_BASE_URL` = your Render backend URL
+4. Deploy.
+
+### 3) Verify Production
+
+1. Open: `https://your-render-service.onrender.com/api/health`
+2. Open your Vercel app URL and upload a PDF.
+3. If requests fail, confirm:
+   - `CLIENT_URLS` on Render includes your exact Vercel domain.
+   - `VITE_API_BASE_URL` on Vercel points to the Render backend.
+   - Both services are redeployed after env var changes.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any improvements.
