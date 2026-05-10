@@ -3,11 +3,14 @@ import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Check, X, ArrowRight, Download, Share2, Target, Brain, Code2, AlertTriangle, Loader2 } from "lucide-react";
 import { Background3D } from "@/components/layout/background-3d";
-import { CyberButton } from "@/components/ui/button-cyber";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScoreChart } from "@/components/charts/score-chart";
 import { SkillsRadar } from "@/components/charts/skills-radar";
 import { type AnalysisResult } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+
+import { Badge } from "@/components/ui/badge";
 
 export default function Results() {
   const [_, setLocation] = useLocation();
@@ -48,7 +51,6 @@ export default function Results() {
 
   const handleExportPDF = async () => {
     setIsExporting(true);
-    // Simulate PDF generation
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const blob = new Blob(["AI Career Architect - Report Content"], { type: "application/pdf" });
@@ -67,7 +69,6 @@ export default function Results() {
 
   const handleGenerateResume = async () => {
     setIsGenerating(true);
-    // Simulate AI resume generation
     await new Promise(resolve => setTimeout(resolve, 3000));
     setIsGenerating(false);
     
@@ -82,7 +83,7 @@ export default function Results() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
+        staggerChildren: 0.1
       }
     }
   };
@@ -99,185 +100,189 @@ export default function Results() {
       <Background3D />
       
       {/* Navigation Bar */}
-      <div className="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setLocation("/")}>
-          <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-black font-bold font-display">
-            AI
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-sp-6 py-sp-4 flex items-center justify-between">
+        <div className="flex items-center gap-sp-2 cursor-pointer group" onClick={() => setLocation("/")}>
+          <div className="w-8 h-8 rounded-sm bg-primary flex items-center justify-center text-primary-foreground font-bold font-headline text-xl group-hover:glow-gold-sm transition-all">
+            A
           </div>
-          <span className="font-display font-bold tracking-wider hidden md:block">CAREER ARCHITECT</span>
+          <span className="font-headline font-bold text-2xl tracking-tight hidden md:block">Career Architect</span>
         </div>
-        <div className="flex gap-4">
-          <CyberButton 
-            variant="outline" 
-            className="hidden md:flex text-xs px-4 py-2 h-auto"
+        <div className="flex gap-sp-4">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="hidden md:flex uppercase tracking-[1px] text-[11px]"
             onClick={handleShare}
           >
             <Share2 className="w-3 h-3 mr-2" /> Share Report
-          </CyberButton>
-          <CyberButton 
-            variant="primary" 
-            className="text-xs px-4 py-2 h-auto"
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            className="uppercase tracking-[1px] text-[11px]"
             onClick={handleExportPDF}
             disabled={isExporting}
           >
             {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Download className="w-3 h-3 mr-2" />}
             {isExporting ? "Exporting..." : "Export PDF"}
-          </CyberButton>
+          </Button>
         </div>
       </div>
 
-      <main className="container mx-auto px-4 pt-8">
+      <main className="container mx-auto px-sp-4 pt-sp-8">
         <motion.div 
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-sp-6"
         >
           {/* Main Score Card - Top Left */}
           <motion.div 
             variants={item}
-            className="lg:col-span-4 glass-panel rounded-xl p-6 min-h-[300px] flex flex-col relative overflow-hidden group"
+            className="lg:col-span-4"
           >
-            <div className="absolute top-0 right-0 p-4 opacity-50">
-              <Target className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="text-lg font-display text-primary mb-4">OVERALL MATCH</h3>
-            <div className="flex-1">
-              <ScoreChart score={result.score} />
-            </div>
-            <div className="mt-4 text-center">
-              <p className="text-sm font-mono text-muted-foreground">
-                Your profile ranks in the top <span className="text-white font-bold">{100 - result.score}%</span> of candidates
-              </p>
-            </div>
+            <Card elevated className="h-full flex flex-col relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-sp-4 opacity-20">
+                <Target className="w-6 h-6 text-primary" />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-primary text-xl">Overall Match</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col items-center">
+                <div className="flex-1 w-full min-h-[200px]">
+                  <ScoreChart score={result.score} />
+                </div>
+                <div className="mt-sp-4 text-center">
+                  <p className="text-sm font-sans font-light text-foreground/60 uppercase tracking-[0.5px]">
+                    Profile Ranking: Top <span className="text-primary font-medium">{100 - result.score}%</span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
 
           {/* Radar Chart - Top Middle */}
           <motion.div 
             variants={item}
-            className="lg:col-span-5 glass-panel rounded-xl p-6 min-h-[300px] flex flex-col"
+            className="lg:col-span-5"
           >
-            <h3 className="text-lg font-display text-secondary mb-4 flex items-center gap-2">
-              <Brain className="w-5 h-5" />
-              SKILL VECTORS
-            </h3>
-            <div className="flex-1 w-full h-[250px]">
-              <SkillsRadar data={result.chart_data} />
-            </div>
+            <Card className="h-full flex flex-col">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-sp-2">
+                  <Brain className="w-5 h-5 text-primary" />
+                  Skill Vectors
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 w-full h-[250px]">
+                <SkillsRadar data={result.chart_data} />
+              </CardContent>
+            </Card>
           </motion.div>
 
           {/* Quick Stats - Top Right */}
-          <motion.div variants={item} className="lg:col-span-3 space-y-6">
-            <div className="glass-panel rounded-xl p-6 flex flex-col gap-2 relative overflow-hidden">
-               <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/20 blur-2xl rounded-full" />
-               <span className="text-xs font-mono text-muted-foreground">KEYWORD MATCHES</span>
-               <span className="text-4xl font-display font-bold text-white">{result.matches.length}</span>
-               <div className="w-full h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
-                 <div className="h-full bg-primary w-[70%]" />
+          <motion.div variants={item} className="lg:col-span-3 space-y-sp-6">
+            <Card className="flex flex-col gap-sp-2 relative overflow-hidden">
+               <span className="text-[11px] font-sans font-medium text-foreground/40 uppercase tracking-[1px]">Keyword Matches</span>
+               <span className="text-4xl font-headline font-bold text-foreground">{result.matches.length}</span>
+               <div className="w-full h-1 bg-white/5 rounded-full mt-sp-2 overflow-hidden">
+                 <div className="h-full bg-primary w-[70%] shadow-[0_0_8px_rgba(201,168,76,0.3)]" />
                </div>
-            </div>
-            <div className="glass-panel rounded-xl p-6 flex flex-col gap-2 relative overflow-hidden">
-               <div className="absolute -right-4 -top-4 w-24 h-24 bg-red-500/20 blur-2xl rounded-full" />
-               <span className="text-xs font-mono text-muted-foreground">MISSING CRITICAL</span>
-               <span className="text-4xl font-display font-bold text-white">{result.missing.length}</span>
-               <div className="w-full h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
-                 <div className="h-full bg-red-500 w-[30%]" />
+            </Card>
+            <Card className="flex flex-col gap-sp-2 relative overflow-hidden">
+               <span className="text-[11px] font-sans font-medium text-foreground/40 uppercase tracking-[1px]">Missing Critical</span>
+               <span className="text-4xl font-headline font-bold text-foreground">{result.missing.length}</span>
+               <div className="w-full h-1 bg-white/5 rounded-full mt-sp-2 overflow-hidden">
+                 <div className="h-full bg-error w-[30%] shadow-[0_0_8px_rgba(239,68,68,0.3)]" />
                </div>
-            </div>
+            </Card>
           </motion.div>
 
           {/* Detailed Lists - Bottom Row */}
-          <motion.div variants={item} className="lg:col-span-8 glass-panel rounded-xl p-8">
-            <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-4">
-              <Code2 className="w-5 h-5 text-primary" />
-              <h3 className="text-xl font-display text-white">TECHNICAL ANALYSIS</h3>
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="font-mono text-sm text-primary mb-4 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  DETECTED SKILLS
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {result.matches.map((skill, i) => (
-                    <span 
-                      key={i} 
-                      className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-mono flex items-center gap-1 hover:bg-primary/20 hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all cursor-default"
-                    >
-                      <Check className="w-3 h-3" /> {skill}
-                    </span>
-                  ))}
-                </div>
+          <motion.div variants={item} className="lg:col-span-8">
+            <Card className="p-sp-8">
+              <div className="flex items-center gap-sp-2 mb-sp-6 border-b border-border pb-sp-4">
+                <Code2 className="w-5 h-5 text-primary" />
+                <CardTitle className="text-2xl">Technical Analysis</CardTitle>
               </div>
-
-              <div>
-                <h4 className="font-mono text-sm text-red-400 mb-4 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                  MISSING KEYWORDS
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {result.missing.map((skill, i) => (
-                    <span 
-                      key={i} 
-                      className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-mono flex items-center gap-1 hover:bg-red-500/20 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all cursor-default"
-                    >
-                      <X className="w-3 h-3" /> {skill}
-                    </span>
-                  ))}
+              
+              <div className="grid md:grid-cols-2 gap-sp-8">
+                <div>
+                  <h4 className="text-[12px] font-sans font-medium text-primary uppercase tracking-[2px] mb-sp-4 flex items-center gap-sp-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    Detected Skills
+                  </h4>
+                  <div className="flex flex-wrap gap-sp-2">
+                    {result.matches.map((skill, i) => (
+                      <Badge key={i} variant="success" className="bg-success/5 border-success/20">
+                        <Check className="w-3 h-3 mr-1" /> {skill}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </motion.div>
 
-          {/* Recommendations / Next Steps - Bottom Right */}
-          <motion.div variants={item} className="lg:col-span-4 glass-panel rounded-xl p-8 bg-gradient-to-br from-white/5 to-transparent">
-             <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-4">
-              <AlertTriangle className="w-5 h-5 text-yellow-400" />
-              <h3 className="text-xl font-display text-white">ACTION PLAN</h3>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-white/5 border border-white/5 hover:border-primary/30 transition-colors group">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 text-primary text-xs font-bold">1</div>
-                  <div>
-                    <h5 className="font-bold text-white text-sm group-hover:text-primary transition-colors">Add Missing Keywords</h5>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Integrate <span className="text-red-300">{result.missing.slice(0, 3).join(", ")}</span> into your experience bullets.
-                    </p>
+                <div>
+                  <h4 className="text-[12px] font-sans font-medium text-error uppercase tracking-[2px] mb-sp-4 flex items-center gap-sp-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-error" />
+                    Missing Keywords
+                  </h4>
+                  <div className="flex flex-wrap gap-sp-2">
+                    {result.missing.map((skill, i) => (
+                      <Badge key={i} variant="destructive" className="bg-error/5 border-error/20">
+                        <X className="w-3 h-3 mr-1" /> {skill}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               </div>
+            </Card>
+          </motion.div>
 
-              <div className="p-4 rounded-lg bg-white/5 border border-white/5 hover:border-primary/30 transition-colors group">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 text-primary text-xs font-bold">2</div>
-                  <div>
-                    <h5 className="font-bold text-white text-sm group-hover:text-primary transition-colors">Quantify Achievements</h5>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Add metrics (%, $) to your recent roles to increase impact score.
-                    </p>
+          {/* Recommendations / Next Steps - Bottom Right */}
+          <motion.div variants={item} className="lg:col-span-4">
+            <Card className="h-full flex flex-col">
+               <div className="flex items-center gap-sp-2 mb-sp-6 border-b border-border pb-sp-4">
+                <AlertTriangle className="w-5 h-5 text-warning" />
+                <CardTitle className="text-2xl">Action Plan</CardTitle>
+              </div>
+              
+              <div className="space-y-sp-4 flex-1">
+                <div className="p-sp-4 rounded-md border border-border hover:border-primary/30 transition-colors group bg-input/50">
+                  <div className="flex items-start gap-sp-3">
+                    <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0 mt-0.5 text-primary text-[11px] font-bold border border-primary/20">1</div>
+                    <div>
+                      <h5 className="font-medium text-foreground text-sm group-hover:text-primary transition-colors uppercase tracking-[0.5px]">Add Missing Keywords</h5>
+                      <p className="text-[12px] text-foreground/60 mt-sp-1 font-light">
+                        Integrate <span className="text-primary/80">{result.missing.slice(0, 3).join(", ")}</span> into your experience bullets.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-sp-4 rounded-md border border-border hover:border-primary/30 transition-colors group bg-input/50">
+                  <div className="flex items-start gap-sp-3">
+                    <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0 mt-0.5 text-primary text-[11px] font-bold border border-primary/20">2</div>
+                    <div>
+                      <h5 className="font-medium text-foreground text-sm group-hover:text-primary transition-colors uppercase tracking-[0.5px]">Quantify Achievements</h5>
+                      <p className="text-[12px] text-foreground/60 mt-sp-1 font-light">
+                        Add metrics (%, $) to your recent roles to increase impact score.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="pt-4 mt-4">
-                 <motion.div
-                   animate={{ scale: [1, 1.02, 1] }}
-                   transition={{ duration: 2, repeat: Infinity }}
+              <div className="mt-sp-8">
+                 <Button 
+                   className="w-full uppercase tracking-[1px]"
+                   size="lg"
+                   onClick={handleGenerateResume}
+                   disabled={isGenerating}
                  >
-                   <CyberButton 
-                     className="w-full text-xs"
-                     onClick={handleGenerateResume}
-                     disabled={isGenerating}
-                   >
-                      {isGenerating ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <ArrowRight className="w-3 h-3 mr-2" />}
-                      {isGenerating ? "GENERATING..." : "GENERATE NEW RESUME"}
-                   </CyberButton>
-                 </motion.div>
+                    {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
+                    {isGenerating ? "GENERATING..." : "GENERATE NEW RESUME"}
+                 </Button>
               </div>
-            </div>
+            </Card>
           </motion.div>
 
         </motion.div>

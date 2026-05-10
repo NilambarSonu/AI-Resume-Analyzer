@@ -5,7 +5,7 @@ interface ScoreChartProps {
 }
 
 export function ScoreChart({ score }: ScoreChartProps) {
-  const data = [{ name: "Score", value: score, fill: score > 75 ? "#00f0ff" : score > 50 ? "#bf00ff" : "#ff0055" }];
+  const data = [{ name: "Score", value: score, fill: "#C9A84C" }];
   
   return (
     <div className="relative w-full h-full flex items-center justify-center">
@@ -13,26 +13,26 @@ export function ScoreChart({ score }: ScoreChartProps) {
         <RadialBarChart 
           innerRadius="70%" 
           outerRadius="100%" 
-          barSize={20} 
+          barSize={12} 
           data={data} 
           startAngle={180} 
           endAngle={-180}
         >
           <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
           <RadialBar
-            background={{ fill: 'rgba(255,255,255,0.05)' }}
+            background={{ fill: 'rgba(201, 168, 76, 0.1)' }}
             dataKey="value"
-            cornerRadius={30} // Use cornerRadius instead of corner
+            cornerRadius={10}
           />
         </RadialBarChart>
       </ResponsiveContainer>
       
       {/* Center Text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-6xl font-display font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+        <span className="text-6xl font-headline font-bold text-foreground">
           {score}
         </span>
-        <span className="text-sm font-mono text-muted-foreground uppercase tracking-widest mt-1">
+        <span className="text-[11px] font-sans font-medium text-primary uppercase tracking-[1px] mt-1">
           Match Score
         </span>
       </div>

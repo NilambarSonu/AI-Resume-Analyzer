@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import type { Server } from "http";
 import multer from "multer";
-import pdfParse from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 import Groq from "groq-sdk";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
@@ -60,8 +60,10 @@ export async function registerRoutes(
       }
 
       const jobDescription = req.body.jobDescription || "General Software Engineer role";
-      
-      const pdfData = await pdfParse(req.file.buffer);
+
+      const parser = new PDFParse({ data: req.file.buffer });
+      const pdfData = await parser.getText();
+      await parser.destroy();
       const resumeText = pdfData.text;
 
       const userPrompt = `JOB DESCRIPTION:\n${jobDescription}\n\nRESUME:\n${resumeText}`;

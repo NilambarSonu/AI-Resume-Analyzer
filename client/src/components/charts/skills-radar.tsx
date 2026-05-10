@@ -8,26 +8,26 @@ export function SkillsRadar({ data }: SkillsRadarProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-        <PolarGrid stroke="#4b5563" />
+        <PolarGrid stroke="rgba(242, 240, 235, 0.1)" />
         <PolarAngleAxis 
           dataKey="subject" 
-          tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'var(--font-mono)' }} 
+          tick={{ fill: 'rgba(242, 240, 235, 0.6)', fontSize: 10, fontFamily: 'var(--font-sans)', fontWeight: 300 }} 
         />
         <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
         <Radar
           name="My Skills"
           dataKey="A"
-          stroke="#22d3ee"
+          stroke="#C9A84C"
           strokeWidth={2}
-          fill="rgba(34, 211, 238, 0.4)"
-          fillOpacity={0.6}
+          fill="#C9A84C"
+          fillOpacity={0.3}
         />
         <Radar
           name="Required"
           dataKey="B"
-          stroke="#bf00ff"
-          strokeWidth={2}
-          fill="#bf00ff"
+          stroke="rgba(242, 240, 235, 0.4)"
+          strokeWidth={1}
+          fill="rgba(242, 240, 235, 0.1)"
           fillOpacity={0.1}
         />
       </RadarChart>

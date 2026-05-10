@@ -5,10 +5,20 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      spacing: {
+        "sp-1": "4px",
+        "sp-2": "8px",
+        "sp-3": "12px",
+        "sp-4": "16px",
+        "sp-5": "24px",
+        "sp-6": "32px",
+        "sp-7": "48px",
+        "sp-8": "64px",
+      },
       borderRadius: {
-        lg: ".5625rem", /* 9px */
-        md: ".375rem", /* 6px */
-        sm: ".1875rem", /* 3px */
+        lg: "12px",
+        md: "8px",
+        sm: "4px",
       },
       colors: {
         // Flat / base colors (regular buttons)
@@ -83,8 +93,8 @@ export default {
         },
       },
       fontFamily: {
+        headline: ["var(--font-headline)"],
         sans: ["var(--font-sans)"],
-        serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
       },
       keyframes: {
