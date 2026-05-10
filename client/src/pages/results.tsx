@@ -12,6 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 
 import { Badge } from "@/components/ui/badge";
 
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+
 export default function Results() {
   const [_, setLocation] = useLocation();
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -50,32 +53,80 @@ export default function Results() {
   };
 
   const handleExportPDF = async () => {
+    const reportElement = document.getElementById("report-content");
+    if (!reportElement) return;
+
     setIsExporting(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const blob = new Blob(["AI Career Architect - Report Content"], { type: "application/pdf" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `career-report-${new Date().getTime()}.pdf`;
-    a.click();
-    
-    setIsExporting(false);
-    toast({
-      title: "Export Complete",
-      description: "Your PDF report has been downloaded.",
-    });
+    try {
+      const canvas = await html2canvas(reportElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#0C0C0E",
+      });
+      
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [canvas.width, canvas.height],
+      });
+      
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`career-report-${new Date().getTime()}.pdf`);
+      
+      toast({
+        title: "Export Complete",
+        description: "Your PDF report has been downloaded.",
+      });
+    } catch (error) {
+      console.error("PDF Export Error:", error);
+      toast({
+        title: "Export Failed",
+        description: "Could not generate PDF report.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleGenerateResume = async () => {
+    if (!result) return;
     setIsGenerating(true);
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    setIsGenerating(false);
     
-    toast({
-      title: "Resume Generated",
-      description: "A new optimized resume version is ready for review.",
-    });
+    try {
+      const res = await fetch("/api/generate-resume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analysis: result }),
+      });
+
+      if (!res.ok) throw new Error("Generation failed");
+      
+      const { content } = await res.json();
+      
+      // Download as Markdown file
+      const blob = new Blob([content], { type: "text/markdown" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `optimized-resume-${new Date().getTime()}.md`;
+      a.click();
+      
+      toast({
+        title: "Resume Generated",
+        description: "Your optimized resume (Markdown) has been downloaded.",
+      });
+    } catch (error) {
+      console.error("Resume Generation Error:", error);
+      toast({
+        title: "Generation Failed",
+        description: "Could not generate optimized resume.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const container = {
@@ -129,7 +180,7 @@ export default function Results() {
         </div>
       </div>
 
-      <main className="container mx-auto px-sp-4 pt-sp-8">
+      <main id="report-content" className="container mx-auto px-sp-4 pt-sp-8 bg-background">
         <motion.div 
           variants={container}
           initial="hidden"

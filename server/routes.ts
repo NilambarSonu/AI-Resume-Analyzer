@@ -9,11 +9,8 @@ import { z } from "zod";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Initialize the Groq client
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
-
 const SYSTEM_PROMPT = `
-You are an expert AI technical recruiter. Analyze the resume against the job description.
+You are the AI Career Architect. Analyze the resume against the job description with surgical precision and black-tie elegance.
 You MUST return ONLY a valid JSON object. Do not include markdown formatting or extra text.
 
 The JSON must EXACTLY match this structure:
@@ -36,19 +33,18 @@ The JSON must EXACTLY match this structure:
 Note: 'A' is the candidate's skill level, 'B' is the job requirement level.
 `;
 
-const FALLBACK_MOCK_JSON = {
-  score: 0,
-  matches: ["Error processing"],
-  missing: ["API Failure"],
-  chart_data: [
-    { subject: "Error", A: 0, B: 0, fullMark: 150 }
-  ]
-};
+let groq: Groq;
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Initialize Groq client inside registerRoutes so env vars are ready
+  const apiKey = (process.env.GROQ_API_KEY || "").trim();
+  groq = new Groq({ apiKey });
+  
+  console.log(`[Groq] Initialized with key prefix: ${apiKey.substring(0, 10)}...`);
+
   app.get("/api/health", (_req, res) => {
     res.json({ status: "ok" });
   });
@@ -89,9 +85,44 @@ export async function registerRoutes(
 
       res.json(parsedJson);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("LLM Analysis Error:", error);
-      res.json(FALLBACK_MOCK_JSON);
+      const message = error?.error?.error?.message || error.message || "Failed to analyze resume";
+      res.status(500).json({ message });
+    }
+  });
+
+  app.post(api.generate.resume.path, async (req, res) => {
+    try {
+      const { analysis } = api.generate.resume.input.parse(req.body);
+
+      const generatePrompt = `
+        As the AI Career Architect, create an OPTIMIZED RESUME version based on this analysis:
+        MATCH SCORE: ${analysis.score}%
+        DETECTED SKILLS: ${analysis.matches.join(", ")}
+        MISSING KEYWORDS: ${analysis.missing.join(", ")}
+        
+        Provide the resume in a clean, professional MARKDOWN format. 
+        Focus on integrating the missing keywords naturally into experience bullets.
+        Use black-tie elegance in tone and formatting.
+      `;
+
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are the AI Career Architect. You output high-end, optimized professional resumes." },
+          { role: "user", content: generatePrompt }
+        ],
+        model: "llama-3.3-70b-versatile",
+        temperature: 0.2,
+      });
+
+      const content = chatCompletion.choices[0]?.message?.content || "Failed to generate resume content.";
+      res.json({ content });
+
+    } catch (error: any) {
+      console.error("LLM Generation Error:", error);
+      const message = error?.error?.error?.message || error.message || "Failed to generate resume";
+      res.status(500).json({ message });
     }
   });
 
